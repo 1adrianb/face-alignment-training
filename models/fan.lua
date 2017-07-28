@@ -5,11 +5,13 @@
 -- ICCV 2017
 --
 
+local cudnn = require 'cudnn'
+
 -- Define some short names
 local conv = cudnn.SpatialConvolution
 local batchnorm = nn.SpatialBatchNormalization
 local relu = cudnn.ReLU
-local upsample = nn.SpatialUpsamplingNearest
+local upsample = nn.SpatialUpSamplingNearest
 
 -- Opts
 local nModules = 1
@@ -17,7 +19,7 @@ local nFeats = 256
 local nStack = 8
 
 
-local function convBlock(numIn,numOut,order)
+local function convBlock(numIn, numOut, order)
     local cnet = nn.Sequential()
         :add(batchnorm(numIn,1e-5,false))
         :add(relu(true))
@@ -80,7 +82,7 @@ local function hourglass(n, f)
         local b2 = nn.Sequential()
 
         for i = 1,nModules do b1:add(Residual(f,f)) end
-        b2:add(maxp(2,2,2,2))
+        b2:add(nn.SpatialMaxPooling(2,2,2,2))
 
         if n>1 then
                 for i = 1,nModules do b2:add(Residual(f,f)) end
@@ -110,15 +112,15 @@ end
 function createModel(opt)
     nModules = opt.nModules
     nFeats = opt.nFeats
-    nStack = opt.nStack
+    nStack = opt.nStacks
 
     local inp = nn.Identity()()
 
     -- Initial processing of the image
-    local cnv1_ = nnlib.SpatialConvolution(3,64,7,7,2,2,3,3)(inp)           -- 128
-    local cnv1 = nnlib.ReLU(true)(nn.SpatialBatchNormalization(64)(cnv1_))
+    local cnv1_ = conv(3,64,7,7,2,2,3,3)(inp)           -- 128
+    local cnv1 = relu(true)(batchnorm(64)(cnv1_))
     local r1 = Residual(64,128)(cnv1)
-    local pool = nnlib.SpatialMaxPooling(2,2,2,2)(r1)                       -- 64
+    local pool = nn.SpatialMaxPooling(2,2,2,2)(r1)                       -- 64
     local r4 = Residual(128,128)(pool)
     local r5 = Residual(128,nFeats)(r4)
 
@@ -126,7 +128,7 @@ function createModel(opt)
     local inter = r5
 
     for i = 1,nStack do
-        local hg = hourglass(4,nFeats,inter)
+        local hg = hourglass(4,nFeats)(inter)
 
         -- Residual layers at output resolution
         local ll = hg

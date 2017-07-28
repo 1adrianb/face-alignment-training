@@ -55,7 +55,7 @@ function  M.setup(opt, checkpoint)
     local criterion
     if opt.nStacks>1 then
         criterion = nn.ParallelCriterion()
-        for i=1,opt.nStacks:
+        for i=1,opt.nStacks do
             criterion:add(nn.MSECriterion())
         end
     else
@@ -64,3 +64,5 @@ function  M.setup(opt, checkpoint)
 
     return model:cuda(), criterion:cuda()
 end
+
+return M

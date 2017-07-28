@@ -1,12 +1,16 @@
 require 'torch'
+require 'cutorch'
 require 'paths'
 require 'nn'
 require 'nngraph'
 
-local DataLoader = require 'datalaoder'
+local DataLoader = require 'dataloader'
 local checkpoints = require 'checkpoints'
 local models = require 'models/init'
 local Trainer = require 'train'
+local opts = require 'opts'
+
+local opt = opts.parse(arg)
 
 torch.setdefaulttensortype('torch.FloatTensor')
 torch.setnumthreads(1)
