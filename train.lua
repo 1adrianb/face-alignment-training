@@ -1,3 +1,6 @@
+require 'cunn'
+local optim = require 'optim'
+
 local lr_policy = {
     {0,50,2.5e-4},
     {50,70,1e-4},
@@ -48,6 +51,8 @@ function Trainer:train(epoch, dataloader)
                 self:copyInputs(sample)
 
                 self.model:zeroGradParameters()
+                local output = self.model:forward(self.input)
+
                 local loss = self.criterion:forward(output, self.label)
 
                 self.criterion:backward(self.model.output, self.label)
@@ -94,9 +99,9 @@ function Trainer:copyInputs(sample)
     label:resize(sample.label:size()):copy(sample.label)
 
     -- Adjust the input accordingly to the network arhitecture 
-    if self.opt.nStack then
+    if self.opt.nStacks>1 then
         local tempLabel = {}
-        for i=1,self.opt.nStack do
+        for i=1,self.opt.nStacks do
             table.insert(tempLabel, label)
         end
 
@@ -104,8 +109,9 @@ function Trainer:copyInputs(sample)
     else 
         self.label = label
     end
-
 end
+
+return M.Trainer
 
 
 

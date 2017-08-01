@@ -109,6 +109,32 @@ local function hourglass(n, f)
         return model:add(nn.CAddTable())
 end
 
+local function hourglass(n, f, inp)
+    -- Upper branch
+    local up1 = inp
+    for i = 1,nModules do up1 = Residual(f,f)(up1) end
+
+    -- Lower branch
+    local low1 = cudnn.SpatialMaxPooling(2,2,2,2)(inp)
+    for i = 1,nModules do low1 = Residual(f,f)(low1) end
+    local low2
+
+    if n > 1 then low2 = hourglass(n-1,f,low1)
+    else
+        low2 = low1
+        for i = 1,nModules do low2 = Residual(f,f)(low2) end
+    end
+
+    local low3 = low2
+    for i = 1,nModules do low3 = Residual(f,f)(low3) end
+    local up2 = nn.SpatialUpSamplingNearest(2)(low3)
+
+    -- Bring two branches together
+    return nn.CAddTable()({up1,up2})
+end
+
+
+
 function createModel(opt)
     nModules = opt.nModules
     nFeats = opt.nFeats
@@ -128,7 +154,7 @@ function createModel(opt)
     local inter = r5
 
     for i = 1,nStack do
-        local hg = hourglass(4,nFeats)(inter)
+        local hg = hourglass(4,nFeats,inter)
 
         -- Residual layers at output resolution
         local ll = hg

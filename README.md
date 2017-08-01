@@ -21,10 +21,11 @@ Note: If you are interested in a binarized version, capable of running on device
 - [xlua](https://github.com/torch/xlua)
 - [image](https://github.com/torch/image)
 - [paths](https://github.com/torch/paths)
+- [matio](https://github.com/soumith/matio-ffi.torch)
 
 ## Setup
 
-Clone the github repository and install all the dependencies mentiones above.
+1. Clone the github repository and install all the dependencies mentiones above.
 
 ```bash
 
@@ -32,15 +33,16 @@ git  clone https://github.com/1adrianb/face-alignment-training
 cd face-alignment-training
 ```
 
-alternatively, we also offer a pre-configured Dockerfile.
+2. Download the 300W-LP dataset from the authors webpage. In order to train on your own data the dataloader.lua file needs to be adapted.
 
+3. Download the 300W-LP annotations converted to t7 format from [here](https://www.adrianbulat.com/downloads/FaceAlignment/landmarks.zip), extract it and move the ```landmarks``` folder to the root of the 300W-LP dataset.
 
 ## Usage
 
 In order to run the demo please download the required models available bellow and the associated data.
 
 ```bash
-th main.lua
+th main.lua -data path_to_300W_LP_dataset
 ```
 
 In order to see all the available options please run:
@@ -52,8 +54,8 @@ th main.lua --help
 ## Citation
 
 ```
-@inproceedings{bulat2016human,
-  title={How far are we from solving the 2D & 3D Face Alignment problem?(and a dataset of 230,000 3D facial landmarks)},
+@inproceedings{bulat2017far,
+  title={How far are we from solving the 2D \& 3D Face Alignment problem? (and a dataset of 230,000 3D facial landmarks)},
   author={Bulat, Adrian and Tzimiropoulos, Georgios},
   booktitle={International Conference on Computer Vision},
   year={2017}
@@ -61,4 +63,5 @@ th main.lua --help
 ```
 
 ## Acknowledgements
+
 This pipeline is build around the ImageNet training code avaialable at <https://github.com/facebook/fb.resnet.torch>

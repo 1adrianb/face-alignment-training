@@ -7,29 +7,15 @@ local DataLoader = torch.class('DataLoader', M)
 
 function DataLoader.getDataFaces(opt, split)
     print('=> Building dataset...')
-    base_dir = '/mnt/rogue/udisk/psxasj/db/3DDFA-300W/300W_LP/landmarks/'
+    base_dir = opt.data..'landmarks/'
     dirs = paths.dir(base_dir)
     lines = {}
-
-    helentest = {}
-    for f in paths.files('/mnt/rogue/db1/psxab5/faces/testset/','.pts') do
-                helentest[#helentest+1] = f:sub(1,#f-4)
-    end
 
     for i=1,#dirs do
         if string.sub(dirs[i],1,1) ~= '.' then
             for f in paths.files(base_dir..dirs[i],'.mat') do
-                if not string.find(f, "test") then
-                    addme = true;
-                    for j=1,#helentest do
-                        if string.find(f,helentest[j]) then
-                            addme=false
-                            break
-                        end
-                    end
-                    if addme then
+                if not string.find(f, "test") then              
                         lines[#lines+1] = f
-                    end
                 end
             end
         end

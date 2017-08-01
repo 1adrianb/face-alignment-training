@@ -12,8 +12,26 @@ function DatasetImages:__init( opt, split, annot )
     self.typeOfData = split
 end
 
+function DatasetImages:generateSampleFace(idx)
+    local main_pts = torch.load(opt.data..'landmarks/'..self.annot[idx]:split('_')[1]..'/'..string.sub(self.annot[idx],1,#self.annot[idx]-4)..'.t7')
+    local pts = main_pts[1] --- 2:3D
+    local c = torch.Tensor{450/2,450/2+50}
+    local s = 1.8
+
+    local img = image.load(self.opt.data..self.annot[idx]:split('_')[1]..'/'..string.sub(self.annot[idx],1,#self.annot[idx]-8)..'.jpg')
+    local inp = crop(img, c, s, 0, 256)
+    local out = torch.zeros(self.nParts, 64, 64)
+    for i = 1, self.nParts do
+        if pts[i][1] > 0 then -- Checks that there is a ground truth annotation
+            drawGaussian(out[i], transform(torch.add(pts[i],1), c, s, 0, 64), 1)
+        end
+    end
+
+    return inp,out,pts,c,s
+end
+
 function DatasetImages:get(shuffle,i)
-    local inp, out, pts, c, s = generateSampleFace(i,self)
+    local inp, out, pts, c, s = self:generateSampleFace(i)
     self.pts, self.c, self.s = pts,c,s
     return inp, out
 end
@@ -29,7 +47,7 @@ function DatasetImages:preprocess(input, label)
 
         -- Scale/rotation
         if torch.uniform() <= .6 then r = 0 end
-        local inp,out = self.opt.inputRes, self.opt.outputRes
+        local inp,out = 256, 64
         local divideBy = 200
 
         input = crop(input, {(inp+1)/2,(inp+1)/2}, inp*s/divideBy, r, inp)

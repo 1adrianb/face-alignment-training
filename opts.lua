@@ -8,16 +8,17 @@ function M.parse(arg)
    cmd:text()
    cmd:text('Options:')
     ------------ General options --------------------
-   cmd:option('-data',       '',         'Path to dataset')
+   cmd:option('-data',       'dataset/300W-LP/',         'Path to dataset')
    cmd:option('-manualSeed', 0,          'Manually set RNG seed')
    cmd:option('-nGPU',       1,          'Number of GPUs to use by default')
    cmd:option('-backend',    'cudnn',    'Options: cudnn | cunn')
    cmd:option('-cudnn',      'fastest',  'Options: fastest | default | deterministic')
    cmd:option('-gen',        'gen',      'Path to save generated files')
+   cmd:option('-snapshot',    3, 'save a snapshot every n epochs')
    ------------- Data options ------------------------
    cmd:option('-nThreads',        2, 'number of data loading threads')
    ------------- Training options --------------------
-   cmd:option('-nEpochs',         0,       'Number of total epochs to run')
+   cmd:option('-nEpochs',         100,       'Number of total epochs to run')
    cmd:option('-epochNumber',     1,       'Manual epoch number (useful on restarts)')
    cmd:option('-batchSize',       10,      'mini-batch size (1 = pure stochastic)')
    ------------- Checkpointing options ---------------
