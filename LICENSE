@@ -1,3 +1,8 @@
+This pipeline is build around the ImageNet training code avaialable at <https://github.com/facebook/fb.resnet.torch> and HourGlass(HG) code available at https://github.com/anewell/pose-hg-train
+Copyright (c) 2016, Facebook, Inc. 
+Copyright (c) 2016, University of Michigan
+
+For the rest of the code and models:
 Copyright (c) 2017, University of Nottingham
 All rights reserved.
 
