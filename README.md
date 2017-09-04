@@ -64,4 +64,4 @@ th main.lua --help
 
 ## Acknowledgements
 
-This pipeline is build around the ImageNet training code avaialable at <https://github.com/facebook/fb.resnet.torch>
+This pipeline is build around the ImageNet training code avaialable at <https://github.com/facebook/fb.resnet.torch> and HourGlass(HG) code available at https://github.com/anewell/pose-hg-train
