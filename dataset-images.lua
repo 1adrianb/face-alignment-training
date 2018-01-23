@@ -13,7 +13,7 @@ function DatasetImages:__init( opt, split, annot )
 end
 
 function DatasetImages:generateSampleFace(idx)
-    local main_pts = torch.load(opt.data..'landmarks/'..self.annot[idx]:split('_')[1]..'/'..string.sub(self.annot[idx],1,#self.annot[idx]-4)..'.t7')
+    local main_pts = torch.load(self.opt.data..'landmarks/'..self.annot[idx]:split('_')[1]..'/'..string.sub(self.annot[idx],1,#self.annot[idx]-4)..'.t7')
     local pts = main_pts[1] --- 2:3D
     local c = torch.Tensor{450/2,450/2+50}
     local s = 1.8
